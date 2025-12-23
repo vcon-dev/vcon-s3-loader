@@ -1,0 +1,6 @@
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+moto>=4.2.0
+fakeredis>=2.20.0
+
