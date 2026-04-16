@@ -1,0 +1,262 @@
+{
+  "schema_version": "1.0.0",
+  "repo": "vcon-s3-loader",
+  "repo_version": "0.1.0",
+  "archetype": "python-library",
+  "generated_at": "2026-04-16T15:15:46.275044+00:00",
+  "stats": {
+    "node_count": 39,
+    "edge_count": 0
+  },
+  "nodes": [
+    {
+      "id": "class:CheckpointManager",
+      "type": "class",
+      "name": "CheckpointManager",
+      "file": "src/checkpoint.py",
+      "line": 12
+    },
+    {
+      "id": "class:Config",
+      "type": "class",
+      "name": "Config",
+      "file": "src/config.py",
+      "line": 21
+    },
+    {
+      "id": "class:DateProcessor",
+      "type": "class",
+      "name": "DateProcessor",
+      "file": "src/date_processor.py",
+      "line": 10
+    },
+    {
+      "id": "class:HTTPClient",
+      "type": "class",
+      "name": "HTTPClient",
+      "file": "src/http_client.py",
+      "line": 13
+    },
+    {
+      "id": "class:VConS3LoaderService",
+      "type": "class",
+      "name": "VConS3LoaderService",
+      "file": "src/main.py",
+      "line": 23
+    },
+    {
+      "id": "function:setup_logging",
+      "type": "function",
+      "name": "setup_logging",
+      "file": "src/main.py",
+      "line": 474
+    },
+    {
+      "id": "function:main",
+      "type": "function",
+      "name": "main",
+      "file": "src/main.py",
+      "line": 484
+    },
+    {
+      "id": "class:Metrics",
+      "type": "class",
+      "name": "Metrics",
+      "file": "src/metrics.py",
+      "line": 12
+    },
+    {
+      "id": "class:RateLimiter",
+      "type": "class",
+      "name": "RateLimiter",
+      "file": "src/rate_limiter.py",
+      "line": 12
+    },
+    {
+      "id": "class:SlidingWindowRateLimiter",
+      "type": "class",
+      "name": "SlidingWindowRateLimiter",
+      "file": "src/rate_limiter.py",
+      "line": 85
+    },
+    {
+      "id": "class:RedisClient",
+      "type": "class",
+      "name": "RedisClient",
+      "file": "src/redis_client.py",
+      "line": 11
+    },
+    {
+      "id": "class:S3Client",
+      "type": "class",
+      "name": "S3Client",
+      "file": "src/s3_client.py",
+      "line": 14
+    },
+    {
+      "id": "class:VConLoader",
+      "type": "class",
+      "name": "VConLoader",
+      "file": "src/vcon_loader.py",
+      "line": 11
+    },
+    {
+      "id": "config:AWS_ACCESS_KEY_ID",
+      "type": "config",
+      "name": "AWS_ACCESS_KEY_ID",
+      "file": "tests/test_integration.py"
+    },
+    {
+      "id": "config:AWS_DEFAULT_REGION",
+      "type": "config",
+      "name": "AWS_DEFAULT_REGION",
+      "file": "tests/test_integration.py"
+    },
+    {
+      "id": "config:AWS_REGION",
+      "type": "config",
+      "name": "AWS_REGION",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:AWS_SECRET_ACCESS_KEY",
+      "type": "config",
+      "name": "AWS_SECRET_ACCESS_KEY",
+      "file": "tests/test_integration.py"
+    },
+    {
+      "id": "config:AWS_SECURITY_TOKEN",
+      "type": "config",
+      "name": "AWS_SECURITY_TOKEN",
+      "file": "tests/test_integration.py"
+    },
+    {
+      "id": "config:AWS_SESSION_TOKEN",
+      "type": "config",
+      "name": "AWS_SESSION_TOKEN",
+      "file": "tests/test_integration.py"
+    },
+    {
+      "id": "config:BATCH_SIZE",
+      "type": "config",
+      "name": "BATCH_SIZE",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:CHECKPOINT_FILE",
+      "type": "config",
+      "name": "CHECKPOINT_FILE",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:LOG_LEVEL",
+      "type": "config",
+      "name": "LOG_LEVEL",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:MIGRATE_VERSION",
+      "type": "config",
+      "name": "MIGRATE_VERSION",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:POLL_INTERVAL_SECONDS",
+      "type": "config",
+      "name": "POLL_INTERVAL_SECONDS",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:POST_AUTH_TOKEN",
+      "type": "config",
+      "name": "POST_AUTH_TOKEN",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:POST_AUTH_TYPE",
+      "type": "config",
+      "name": "POST_AUTH_TYPE",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:POST_URL",
+      "type": "config",
+      "name": "POST_URL",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:POST_USE_VCON_METHOD",
+      "type": "config",
+      "name": "POST_USE_VCON_METHOD",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:RATE_LIMIT_REQUESTS_PER_SECOND",
+      "type": "config",
+      "name": "RATE_LIMIT_REQUESTS_PER_SECOND",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:REDIS_ENABLED",
+      "type": "config",
+      "name": "REDIS_ENABLED",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:REDIS_KEY_PREFIX",
+      "type": "config",
+      "name": "REDIS_KEY_PREFIX",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:REDIS_URL",
+      "type": "config",
+      "name": "REDIS_URL",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:RETRY_ATTEMPTS",
+      "type": "config",
+      "name": "RETRY_ATTEMPTS",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:RETRY_BACKOFF_BASE",
+      "type": "config",
+      "name": "RETRY_BACKOFF_BASE",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:S3_BUCKET_NAME",
+      "type": "config",
+      "name": "S3_BUCKET_NAME",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:S3_PREFIX",
+      "type": "config",
+      "name": "S3_PREFIX",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:START_DATE",
+      "type": "config",
+      "name": "START_DATE",
+      "file": "src/config.py"
+    },
+    {
+      "id": "config:VALIDATE_VCON",
+      "type": "config",
+      "name": "VALIDATE_VCON",
+      "file": "src/config.py"
+    },
+    {
+      "id": "document:readme-md",
+      "type": "document",
+      "name": "README.md",
+      "file": "README.md"
+    }
+  ],
+  "edges": [],
+  "subsystems": []
+}
