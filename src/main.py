@@ -188,7 +188,8 @@ class VConS3LoaderService:
             # POST vCon
             logger.debug(f"POSTing vCon to endpoint: identifier={identifier}, s3_key={s3_key}")
             post_start = time.time()
-            success = self.http_client.post_vcon(vcon_data, vcon_obj=vcon)
+            payload = self.vcon_loader.payload_for(vcon_data, vcon)
+            success = self.http_client.post_vcon(payload, vcon_obj=vcon)
             post_time = time.time() - post_start
             logger.debug(f"POST request completed in {post_time:.3f}s: success={success}, identifier={identifier}")
             

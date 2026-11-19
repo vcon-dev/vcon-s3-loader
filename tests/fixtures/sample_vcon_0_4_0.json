@@ -1,0 +1,46 @@
+{
+  "vcon": "0.4.0",
+  "uuid": "01928e10-193e-8231-b9a2-279e0d16bc47",
+  "created_at": "2024-01-01T10:00:00Z",
+  "parties": [
+    {
+      "name": "Alice",
+      "mailto": "alice@example.com"
+    },
+    {
+      "name": "Bob",
+      "mailto": "bob@example.com"
+    }
+  ],
+  "dialog": [
+    {
+      "type": "text",
+      "start": "2024-01-01T10:00:00Z",
+      "parties": [0, 1],
+      "originator": 0,
+      "mediatype": "text/plain",
+      "encoding": "none",
+      "body": "Hello, Bob!"
+    },
+    {
+      "type": "text",
+      "start": "2024-01-01T10:01:00Z",
+      "parties": [1, 0],
+      "originator": 1,
+      "mediatype": "text/plain",
+      "encoding": "none",
+      "body": "Hi, Alice!"
+    }
+  ],
+  "attachments": [
+    {
+      "purpose": "tags",
+      "start": "2024-01-01T10:00:00Z",
+      "party": 0,
+      "dialog": 0,
+      "mediatype": "application/json",
+      "encoding": "json",
+      "body": ["source:email"]
+    }
+  ]
+}
