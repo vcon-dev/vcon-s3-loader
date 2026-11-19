@@ -40,7 +40,7 @@ flowchart TD
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.12 or higher (required by `vcon` 1.x)
 - AWS credentials configured (via environment variables, IAM role, or AWS profile)
 - Redis (optional, for deduplication)
 
@@ -189,8 +189,8 @@ processing:
   poll_interval_seconds: 300
   checkpoint_file: .checkpoint.json
   batch_size: 10  # Optional: process in batches
-  validate_vcon: true  # Validate vCon before posting
-  migrate_version: false  # Migrate vCon to latest version format
+  validate_vcon: true  # Validate vCon (core-05 rules) before posting
+  migrate_version: false  # POST 0.4.0 vCons in their migrated 0.5.0 form
 
 redis:
   url: redis://localhost:6379
@@ -264,6 +264,22 @@ python -m src.main
 4. **Checkpoint Management**: The service saves checkpoints after processing each date, allowing it to resume from the last processed date after restarts.
 
 5. **Error Handling**: Failed POSTs are retried with exponential backoff. Invalid vCons are logged and skipped.
+
+### vCon versions
+
+The loader uses `vcon>=1.0.3,<2`, which implements draft-ietf-vcon-vcon-core-05
+(`"vcon": "0.5.0"`). Release 1.0.0 of the loader moved to it from `vcon` 0.x.
+
+- **0.5.0** vCons are validated and posted as they are.
+- **0.4.0** vCons are migrated to 0.5.0 by the library when they are loaded
+  (Sessions are created, receivers move off the Dialogs, and so on), and the
+  migrated form is what is validated. The original document is posted unless
+  `MIGRATE_VERSION=true`, in which case the migrated 0.5.0 document is posted
+  and the migration summary is logged. A signed (JWS) or encrypted (JWE) vCon
+  is always posted unchanged.
+- **Older syntax** (anything before 0.4.0, such as `"0.0.1"`) is not migrated
+  and fails validation, so it is skipped while `VALIDATE_VCON=true`. Set
+  `VALIDATE_VCON=false` to forward such archives unvalidated.
 
 ## Testing
 
@@ -343,7 +359,7 @@ vcon-s3-loader/
 - `POST_HEADERS`: Custom headers (JSON format)
 - `POST_AUTH_TYPE`: Authentication type (bearer, api_key, custom)
 - `POST_AUTH_TOKEN`: Authentication token/API key
-- `POST_USE_VCON_METHOD`: Use vCon library's `post_to_url()` method
+- `POST_USE_VCON_METHOD`: Use vCon library's `post_to_url()` method. This posts the loaded `Vcon` object, so a 0.4.0 vCon is sent in its migrated 0.5.0 form whatever `MIGRATE_VERSION` says.
 - `RETRY_ATTEMPTS`: Number of retry attempts (default: 3)
 - `RETRY_BACKOFF_BASE`: Base seconds for exponential backoff (default: 2)
 
@@ -357,8 +373,8 @@ vcon-s3-loader/
 - `POLL_INTERVAL_SECONDS`: Seconds between S3 scans after backfill (default: 300)
 - `CHECKPOINT_FILE`: File path for checkpoint (default: .checkpoint.json)
 - `BATCH_SIZE`: Number of vCons to process in batch (default: 1)
-- `VALIDATE_VCON`: Validate vCon before posting (default: true)
-- `MIGRATE_VERSION`: Migrate vCon to latest version format (default: false)
+- `VALIDATE_VCON`: Validate vCon before posting (default: true). See [vCon versions](#vcon-versions).
+- `MIGRATE_VERSION`: POST a 0.4.0 vCon in its migrated 0.5.0 form instead of the original document (default: false). See [vCon versions](#vcon-versions).
 
 ### Redis Configuration
 

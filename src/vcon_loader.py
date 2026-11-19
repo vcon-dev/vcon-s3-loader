@@ -1,4 +1,11 @@
-"""VCon loader for parsing and validating vCon JSON files."""
+"""VCon loader for parsing and validating vCon JSON files.
+
+Built on vcon-lib 1.x (vCon core-05, syntax "0.5.0"). The library reads both
+0.4.0 and 0.5.0: an unsigned vCon that declares "0.4.0" is migrated to 0.5.0
+when it is loaded, so validation checks the migrated form. Other syntax
+versions (pre-0.4.0) are not migrated and fail validation. The document that
+is POSTed is the original from S3 unless version migration is enabled.
+"""
 
 import logging
 import json
@@ -16,8 +23,10 @@ class VConLoader:
         Initialize vCon loader.
 
         Args:
-            validate: Whether to validate vCons using is_valid()
-            migrate_version: Whether to migrate vCon to latest version format
+            validate: Whether to validate vCons using is_valid() (core-05 rules,
+                after migrating 0.4.0 input)
+            migrate_version: Whether to POST the migrated 0.5.0 form of a
+                0.4.0 vCon instead of the original document
         """
         self.validate = validate
         self.migrate_version = migrate_version
@@ -205,34 +214,54 @@ class VConLoader:
 
     def _migrate_vcon(self, vcon: Vcon, uuid: str) -> Vcon:
         """
-        Migrate vCon to latest version format if needed.
+        Log the 0.4.0 -> 0.5.0 migration the library applied on load, if any.
+
+        vcon-lib 1.x migrates an unsigned 0.4.0 vCon to 0.5.0 when it is
+        built from JSON (``vcon.migration_report`` holds what was inferred
+        or left unresolved). A signed 0.4.0 vCon is kept signed and is not
+        migrated.
 
         Args:
-            vcon: Vcon object to migrate
+            vcon: Vcon object (already migrated by the library if needed)
             uuid: vCon UUID for logging
 
         Returns:
-            Migrated Vcon object (or original if migration not needed/failed)
+            The same Vcon object
         """
         try:
-            # Check if migration is needed by comparing versions
-            current_version = getattr(vcon, 'vcon', None)
-            logger.debug(f"Checking version migration: uuid={uuid}, current_version={current_version}")
-            
-            # The vCon library's build_from_json should handle version compatibility
-            # If explicit migration is needed, we can add it here
-            # For now, build_from_json handles version compatibility automatically
-            # This method provides a hook for future explicit migration logic
-            
-            if current_version:
-                logger.debug(f"vCon version: {current_version}, uuid={uuid}")
-                # If future migration logic is needed, add it here
-                # For example: if current_version < target_version: migrate...
-            
+            report = getattr(vcon, "migration_report", None)
+            if report is not None:
+                logger.info(f"vCon {uuid} migrated to 0.5.0: {report.summary()}")
+            else:
+                current_version = getattr(vcon, "vcon", None)
+                logger.debug(f"No migration needed: uuid={uuid}, version={current_version}")
             return vcon
         except Exception as e:
-            logger.warning(f"Version migration failed for vCon {uuid}, using original: {e}")
+            logger.warning(f"Could not read migration report for vCon {uuid}: {e}")
             return vcon
+
+    def payload_for(self, vcon_data: Dict[str, Any], vcon: Optional[Vcon]) -> Dict[str, Any]:
+        """
+        Return the document to POST for a loaded vCon.
+
+        The original S3 document, unless ``migrate_version`` is on and the
+        library migrated it from 0.4.0 on load, in which case the migrated
+        0.5.0 form. Signed and encrypted vCons are always sent unchanged.
+
+        Args:
+            vcon_data: The vCon document as read from S3
+            vcon: The loaded Vcon object
+
+        Returns:
+            The dictionary to POST
+        """
+        if not self.migrate_version or vcon is None:
+            return vcon_data
+        if self._is_jws_format(vcon_data) or self._is_jwe_format(vcon_data):
+            return self.preserve_security_form(vcon_data)
+        if getattr(vcon, "migration_report", None) is None:
+            return vcon_data
+        return vcon.to_dict()
 
     def preserve_security_form(self, vcon_data: Dict[str, Any]) -> Dict[str, Any]:
         """

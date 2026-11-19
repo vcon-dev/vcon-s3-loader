@@ -311,3 +311,81 @@ def test_load_from_dict_with_parties_dialog_attributes(mock_vcon_class, sample_v
     
     assert vcon is not None
 
+
+
+# --- Real vcon-lib 1.x (core-05), no mocks ---------------------------------
+
+import json
+from pathlib import Path
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def _fixture(name):
+    return json.loads((FIXTURES / name).read_text())
+
+
+def test_loads_and_validates_0_5_0_fixture():
+    """A core-05 (0.5.0) vCon loads and passes validation unchanged."""
+    data = _fixture("sample_vcon.json")
+    loader = VConLoader(validate=True)
+
+    vcon = loader.load_from_dict(data)
+
+    assert vcon is not None
+    assert vcon.is_valid() == (True, [])
+    assert vcon.migration_report is None
+    assert loader.payload_for(data, vcon) is data
+
+
+def test_0_4_0_fixture_is_migrated_on_load_and_validates():
+    """A 0.4.0 vCon is migrated by vcon-lib on load, so it validates."""
+    data = _fixture("sample_vcon_0_4_0.json")
+    loader = VConLoader(validate=True)
+
+    vcon = loader.load_from_dict(data)
+
+    assert vcon is not None
+    assert vcon.vcon == "0.5.0"
+    assert vcon.migration_report is not None
+    assert vcon.to_dict()["sessions"][0]["dialog"] == [0, 1]
+
+
+def test_0_4_0_is_posted_unchanged_without_migrate_version():
+    data = _fixture("sample_vcon_0_4_0.json")
+    loader = VConLoader(validate=True, migrate_version=False)
+
+    vcon = loader.load_from_dict(data)
+
+    assert loader.payload_for(data, vcon) is data
+    assert data["vcon"] == "0.4.0"
+
+
+def test_0_4_0_is_posted_as_0_5_0_with_migrate_version():
+    data = _fixture("sample_vcon_0_4_0.json")
+    loader = VConLoader(validate=True, migrate_version=True)
+
+    vcon = loader.load_from_dict(data)
+    payload = loader.payload_for(data, vcon)
+
+    assert payload["vcon"] == "0.5.0"
+    assert "originator" not in payload["dialog"][0]
+    assert payload["dialog"][0]["parties"] == [0]
+    assert payload["attachments"][0]["party"] == 0
+    assert loader.payload_for(_fixture("sample_vcon.json"), vcon)["vcon"] == "0.5.0"
+
+
+def test_signed_vcon_is_posted_unchanged_with_migrate_version():
+    jws = {"payload": "e30", "signatures": [{"protected": "e30", "signature": "sig"}]}
+    loader = VConLoader(validate=False, migrate_version=True)
+
+    assert loader.payload_for(jws, Mock(migration_report=object())) is jws
+
+
+def test_pre_0_4_0_vcon_fails_validation():
+    """vcon-lib 1.x only reads 0.4.0 and 0.5.0; older syntax fails validation."""
+    data = _fixture("sample_vcon.json")
+    data["vcon"] = "0.0.1"
+
+    assert VConLoader(validate=True).load_from_dict(data) is None
+    assert VConLoader(validate=False).load_from_dict(data) is not None

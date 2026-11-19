@@ -1,6 +1,6 @@
 {
-  "vcon": "0.0.1",
-  "uuid": "test-uuid-12345",
+  "vcon": "0.5.0",
+  "uuid": "01928e10-193e-8231-b9a2-279e0d16bc46",
   "created_at": "2024-01-01T10:00:00Z",
   "updated_at": "2024-01-01T10:00:00Z",
   "parties": [
@@ -13,23 +13,40 @@
       "mailto": "bob@example.com"
     }
   ],
+  "sessions": [
+    {
+      "start": "2024-01-01T10:00:00Z",
+      "parties": [0, 1],
+      "dialog": [0, 1]
+    }
+  ],
   "dialog": [
     {
       "type": "text",
       "start": "2024-01-01T10:00:00Z",
       "parties": [0],
-      "originator": 0,
-      "mimetype": "text/plain",
+      "mediatype": "text/plain",
+      "encoding": "none",
       "body": "Hello, Bob!"
     },
     {
       "type": "text",
       "start": "2024-01-01T10:01:00Z",
       "parties": [1],
-      "originator": 1,
-      "mimetype": "text/plain",
+      "mediatype": "text/plain",
+      "encoding": "none",
       "body": "Hi, Alice!"
+    }
+  ],
+  "attachments": [
+    {
+      "purpose": "tags",
+      "start": "2024-01-01T10:00:00Z",
+      "party": 0,
+      "session": 0,
+      "mediatype": "application/json",
+      "encoding": "json",
+      "body": ["source:email"]
     }
   ]
 }
-

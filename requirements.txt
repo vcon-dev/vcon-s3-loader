@@ -1,5 +1,5 @@
 boto3>=1.34.0
-vcon>=0.1.0,<1
+vcon>=1.0.3,<2
 redis>=5.0.0
 requests>=2.31.0
 pyyaml>=6.0
